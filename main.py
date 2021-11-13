@@ -1,6 +1,7 @@
 
 # Created by sarthak on 11/13/21.
 
+from typing import List
 from PIL import Image
 import random
 import math
@@ -48,7 +49,7 @@ class RSA_Encryption:
             print('Path not found : ', Exception.__name__)
 
     def pub_keygen():
-        prime_nos = [17, 19, 23, 29, 31, 37, 41, 43, 47]
+        prime_nos = [17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59]
 
         p = prime_nos[random.randint(0, len(prime_nos)-1)]
         q = prime_nos[random.randint(0, len(prime_nos)-1)]
@@ -111,25 +112,31 @@ class RSA_Encryption:
         n_u = int(input("Input public key value n : "))
         e_u = int(input("Input public key exp e : "))
 
-        if(n_u != n and e_u != e):
-            print("Invalid key values.")
-            return
+        if(n != 0):
+            if(n_u != n or e_u != e):
+                print("Invalid key values.")
+                return
+        else:
+            n = n_u
+            e = e_u
 
         in_c = []
 
         for index, values in enumerate(image):
             if(values > 1):
-                print(values)
                 c = pow(values, e, mod=n)
                 if(c < 256):
                     image[index] = c
                     in_c.append(index)
-                    print("List value :", in_c)
-                    print('Encrypted data :', image[index])
-                    if(len(in_c) > 2000):
+                    # print('Encrypted data :', image[index])
+                    if(len(in_c) > 1000):
                         break
 
-        print("Total indexes encrypted :", len(in_c))
+        print('\nFinal list of encrypted indices :')
+        i = 0
+        for i in range(0, len(in_c)-1):
+            print('', in_c[i], end='')
+        print("\nTotal indices encrypted :", len(in_c))
 
         # Opening file for writing
         fileInput = open(path, 'wb')
@@ -142,18 +149,23 @@ class RSA_Encryption:
 
         return in_c
 
-    def decrypt(in_c, n, d_pvt):
+    def decrypt(in_c, n, d):
 
         path, image = RSA_Encryption.fetchImage()
 
-        d = int(input("Enter private key exponent d : "))
+        n_u = int(input("Enter private key n : "))
+        d_u = int(input("Enter private key exponent d : "))
 
-        if(d != d_pvt):
-            print('Invalid key entered. Try again!')
-            return
+        if(d != 0):
+            if(n_u != n or d_u != d):
+                print('Invalid key entered. Try again!')
+                return
+        else:
+            n = n_u
+            d = d_u
 
         for index, values in enumerate(in_c):
-            print("List index :", index)
+            # print("List index :", index)
             p = pow(image[values], d, mod=n)
             image[values] = p
 
@@ -167,16 +179,18 @@ class RSA_Encryption:
         img.show()
 
 
-n, e, phi_n = RSA_Encryption.pub_keygen()
-d = RSA_Encryption.pvt_keygen(phi_n, e)
+n = 0
+e = 0
+phi_n = 0
+d = 0
 in_c = []
 
 while True:
     print('\nImage Encryption Application')
     print('1. Encrypt')
     print('2. Decrypt')
-    print('3. Show Public key')
-    print('4. Show Private key')
+    print('3. Generate public key')
+    print('4. Generate private key')
     print('5. View Image')
     print('6. Exit')
 
@@ -185,10 +199,12 @@ while True:
     if (opt == 1):
         in_c = RSA_Encryption.encrypt(n, e)
     elif(opt == 2):
-        RSA_Encryption.decrypt(in_c, n, d_pvt=d)
+        RSA_Encryption.decrypt(in_c, n, d)
     elif(opt == 3):
+        n, e, phi_n = RSA_Encryption.pub_keygen()
         print(f'\nThe public key is [n : {n}], [e : {e}]')
     elif(opt == 4):
+        d = RSA_Encryption.pvt_keygen(phi_n, e)
         print(f'\nThe Private Exponent is [n : {n}] [d : {d}]')
     elif(opt == 5):
         path = RSA_Encryption.fetchImage()[0]
