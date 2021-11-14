@@ -129,13 +129,12 @@ class RSA_Encryption:
                     image[index] = c
                     in_c.append(index)
                     # print('Encrypted data :', image[index])
-                    if(len(in_c) > 1000):
-                        break
 
         print('\nFinal list of encrypted indices :')
-        i = 0
-        for i in range(0, len(in_c)-1):
-            print('', in_c[i], end='')
+
+        for index, values in enumerate(in_c):
+            print('', image[values], end='')
+
         print("\nTotal indices encrypted :", len(in_c))
 
         # Opening file for writing
