@@ -8,7 +8,7 @@ An application that encrypts an image file using RSA encryption algorithm, which
 
 Step 1: Generate a pair of public and private key.\
 Step 2: Input the path to the image you want to encrypt.\
-Step 3: Next enter the public key (n and e). This will encrypt the image.\
+Step 3: Next enter the public key (n and e). This will encrypt the image.
 
 ### Decryption
 
